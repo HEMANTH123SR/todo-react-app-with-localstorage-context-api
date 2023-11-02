@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TodoProvider } from "./context/TodoContext";
 
 function App() {
@@ -15,13 +15,28 @@ function App() {
   };
 
   const delTodo = (id) => {
-    setDodos((prev)=>prev.filter((prevTodo)=>(
-      prevTodo.id !== id
-    )))
+    setDodos((prev) => prev.filter((prevTodo) => prevTodo.id !== id));
   };
 
-  const toggleComplete = () => {};
+  const toggleComplete = (id) => {
+    setDodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
   
+  useEffect(() => {
+    const todos = JSON.parse(localStorage.getItem("todos"));
+    if (todos && todos.length > 0) {
+      setDodos(todos);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos",JSON.stringify(todos))
+  }, [todos]);
+
   return (
     <TodoProvider
       value={{ todos, addTodo, upDatedTodo, delTodo, toggleComplete }}
